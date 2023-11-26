@@ -2,7 +2,7 @@ import pandas as pd
 import io
 import pickle
 
-with open('/Users/danross/Downloads/words.csv') as f:
+with open('Words/words.csv') as f:
     words_raw = f.read()
 
 csv = io.StringIO(words_raw)
