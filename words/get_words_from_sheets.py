@@ -1,10 +1,16 @@
 import gspread
+import pandas as pd
 
 gc = gspread.service_account(filename='murmurate-email-34f60d2ba6cd.json')
 
 wks = gc.open_by_key('1uBARUdToGUDsreuGWSO5s7Nq528Szo3o1ET589wS_Sg')
 sheet = wks.get_worksheet(0)
 
-output = sheet.cell(2,2).value
+word_dict = {}
 
-print(output)
+for col in range(1, len(sheet.row_values(1)) + 1):
+    word_dict[sheet.col_values(col)[0]] = sheet.col_values(col)[1:]
+
+df = pd.DataFrame(word_dict)
+
+print(df)
