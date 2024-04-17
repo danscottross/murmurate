@@ -156,3 +156,6 @@ cython_debug/
 # json - google api key
 .json
 murmurate-email-34f60d2ba6cd.json
+
+# .txt
+gmail_app_password.txt

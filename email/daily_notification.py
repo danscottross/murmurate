@@ -3,14 +3,16 @@ from email.mime.text import MIMEText
 import datetime as dt
 import sys
 
-sys.path.insert(0, '/murmurate/words')
-import get_words_from_postgres as pgwords
+sys.path.append('/Users/danross/GitHub/murmurate/words')
+sys.path.append('/Users/danross/GitHub/murmurate/email')
+
+import get_words_from_sheets as gswords
 
 today = dt.datetime.today().strftime("%A, %B %-d, %Y")
 
-word_list = pgwords.retrieve(3)
-word_bullets = ""
-for item in word_list: word_bullets += f"<li><b>{item[0]}</b> - {item[1]}</li>"
+df = gswords.retrieve(3)
+
+df_html = df.to_html()
 
 subject = f"Murmurate - {today}"
 body = f"""
@@ -18,9 +20,8 @@ body = f"""
   <head><b><u>Words of the Day</b></u></head>
   <body>
     <p>
-        <ul>
-            {word_bullets}
-        </ul>
+        {df_html}
+        <br>
        <i>This message was sent on {dt.datetime.today().strftime('%Y-%m-%d %H:%M:%S')}</i>
     </p>
   </body>
@@ -29,7 +30,7 @@ body = f"""
 sender = "murmurate8@gmail.com"
 recipients = ["danscottross@gmail.com"]
 
-with open("/Users/danross/Documents/murmurate/email/gmail_app_password.txt") as f:
+with open("email/gmail_app_password.txt") as f:
     password = f.read()
 
 def send_email(subject, body, sender, recipients, password):

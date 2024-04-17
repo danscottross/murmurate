@@ -1,18 +1,32 @@
 import gspread
 import pandas as pd
+import datetime as dt
+import random
+import datetime as dt
 
-gc = gspread.service_account(filename='murmurate/murmurate-email-34f60d2ba6cd.json')
+import sys
+sys.path.append('/Users/danross/GitHub/murmurate')
 
-wks = gc.open_by_key('1uBARUdToGUDsreuGWSO5s7Nq528Szo3o1ET589wS_Sg')
-sheet = wks.get_worksheet(0)
+def retrieve(number):
+    gc = gspread.service_account(filename='murmurate-email-34f60d2ba6cd.json')
+    words_key = '1uBARUdToGUDsreuGWSO5s7Nq528Szo3o1ET589wS_Sg'
+    sh = gc.open_by_key(words_key)
+    wks = sh.get_worksheet(0)
 
-word_dict = {}
+    df = pd.DataFrame(wks.get_all_records())
 
-for col in range(1, len(sheet.row_values(1)) + 1):
-    word_dict[sheet.col_values(col)[0]] = sheet.col_values(col)[1:]
+    df.sort_values('Last Used', ascending=True, inplace=True)
 
-df = pd.DataFrame(word_dict)
+    top_20_percent = int(len(wks.col_values(1)) * 0.1)
+    df_new = df.iloc[:top_20_percent]
 
-# df.sort_values('Last User', ascending=False, inplace = True)
+    indexes = random.sample(range(0, top_20_percent), 3)
+    target_words = df_new.iloc[indexes,0].tolist()
 
-print(df)
+    date = dt.datetime.today().strftime('%Y-%m-%d')
+
+    for target_word in target_words:
+        cell = wks.find(target_word)
+        wks.update_cell(cell.row, 3, date)
+
+    return df_new.iloc[indexes,:]
