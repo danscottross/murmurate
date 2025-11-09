@@ -6,7 +6,7 @@ def retrieve(count):
     # Establish connection with the Postgres database
     connection = psycopg2.connect(database="murmurate"
                                 , user="postgres"
-                                , password="tintin"
+                                , password=x
                                 , host="localhost"
                                 , port=5432)
 
